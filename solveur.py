@@ -66,7 +66,7 @@ def solveur(params):
     A = np.zeros((params.nPts,params.nPts))
     b = np.zeros(params.nPts)
 
-    for i in range(nPts):
+    for i in range(params.nPts):
         ri = params.pos[i]
 
         # Condition limite de neumann en r=0
@@ -77,7 +77,7 @@ def solveur(params):
             b[i] = 0
 
         # Condition limite de dirichlet en r=R
-        elif i == nPts-1:
+        elif i == params.nPts-1:
             A[i,i] = 1
             b[i] = params.Ce
 
