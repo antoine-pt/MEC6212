@@ -59,7 +59,7 @@ def normeLinf(ana, sim):
     """
     return np.max(np.abs(ana - sim))
 
-def solveur(params):
+def solveur_avant(params):
     """ Fonction permettant de résoudre le problème numériquement en fonction des paramsètres."""
 
     ## Création des matrices A et b (Ax = b)
@@ -91,6 +91,42 @@ def solveur(params):
 
     return np.linalg.solve(A,b)
 
+def solveur_centre(params):
+    """ Fonction permettant de résoudre le problème numériquement en fonction des paramsètres."""
+
+    ## Création des matrices A et b (Ax = b)
+    A = np.zeros((params.nPts,params.nPts))
+    b = np.zeros(params.nPts)
+
+    for i in range(params.nPts):
+        ri = params.pos[i]
+
+        # Condition limite de neumann en r=0
+        if i == 0:
+            ## Ici, on a une Gear Avant pour la dérivée première
+            ## En effet, l'équation fournit dans le devoir ne permet pas
+            ## d'évaluer en r=0 avec une différence centrée
+            A[i,i] = -3 / (2*params.dr)
+            A[i,i+1] = 4 / (2*params.dr)
+            A[i,i+2] = -1 / (2*params.dr)
+
+            b[i] = 0
+
+        # Condition limite de dirichlet en r=R
+        elif i == params.nPts-1:
+            A[i,i] = 1
+            b[i] = params.Ce
+
+        # Milieu du domaine
+        else:
+            A[i,i-1] = 1 / params.dr**2 - 1 / (2 * ri * params.dr)
+            A[i,i] = - 2 / params.dr**2
+            A[i,i+1] = 1 / (2 * ri * params.dr) + 1 / params.dr**2
+
+            b[i] = params.S/ params.D
+
+    return np.linalg.solve(A,b)
+
 def analytique(params):
     """Fonction renvoyant le vecteur solution analytique au probleme en fonction des parametres."""
     r = sp.Symbol('r')
@@ -111,7 +147,7 @@ if __name__ == "__main__":
     # Création de l'objet params qui contient tous les paramètres
     # on peut passer l'objet params aux fonctions qui en ont besoin
     params = Parametres(nPts=nPts,R=R,D=D,S=S,Ce=Ce)
-    sim = solveur(params)
+    sim = solveur_avant(params)
     ana = analytique(params)
 
     print(f"Erreur L1 avec {params.nPts} points :", normeL1(ana, sim))
