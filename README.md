@@ -5,11 +5,11 @@ Je recommande de créer un environnement virtuel (un genre de poste de travail) 
 
   `python -m venv .venv`\
   `.\.venv\Scripts\activate`\
-  `pip install numpy sympy`\
-
+  `pip install numpy sympy`
+  
 Quand on veut sortir de l'environnement, toujours dans le terminal :
 
-  `deactivate`\
+  `deactivate`
 
 2. Exécuter les tests :
 * Soit on clique directement sur run dans l'IDE
